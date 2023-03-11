@@ -3,6 +3,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:learning_provider/babies.dart';
 import 'package:provider/provider.dart';
 
 import 'dog.dart';
@@ -23,8 +24,19 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<Dog>(
-      create: (context) => Dog(name: 'Dogy', breed: 'FulDog', age: 2),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<Dog>(
+          create: (context) => Dog(name: 'Dogy', breed: 'FulDog', age: 2),
+        ),
+        FutureProvider(
+            create: (context) {
+              final int dogAge = context.read<Dog>().age;
+              final babies = Babies(age: dogAge);
+              return babies.getBabies();
+            },
+            initialData: 0),
+      ],
       child: const HomePage(),
     );
   }
@@ -78,9 +90,20 @@ class Age extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    log('Age Rebuilt');
     return Column(
       children: [
         Text(context.select<Dog, int>((dog) => dog.age).toString()),
+        Consumer<int>(
+          builder: (context, intVal, child) {
+            return Text(intVal.toString());
+          },
+        ),
+        // (
+        //   builder: (context) {
+        //     return Text('Babies Age : ${context.watch<int>()}');
+        //   }
+        // ),
         ElevatedButton(
           onPressed: context.read<Dog>().grow,
           child: const Text('Increase'),
