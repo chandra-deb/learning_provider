@@ -30,12 +30,21 @@ class App extends StatelessWidget {
           create: (context) => Dog(name: 'Dogy', breed: 'FulDog', age: 2),
         ),
         FutureProvider(
-            create: (context) {
-              final int dogAge = context.read<Dog>().age;
-              final babies = Babies(age: dogAge);
-              return babies.getBabies();
-            },
-            initialData: 0),
+          create: (context) {
+            final int dogAge = context.read<Dog>().age;
+            final babies = Babies(age: dogAge);
+            return babies.getBabies();
+          },
+          initialData: 0,
+        ),
+        StreamProvider<String>(
+          create: (context) {
+            final int dogAge = context.read<Dog>().age;
+            final babies = Babies(age: dogAge * 2);
+            return babies.bark();
+          },
+          initialData: 'Bark 0 times',
+        )
       ],
       child: const HomePage(),
     );
@@ -107,7 +116,8 @@ class Age extends StatelessWidget {
         ElevatedButton(
           onPressed: context.read<Dog>().grow,
           child: const Text('Increase'),
-        )
+        ),
+        Text(context.watch<String>())
       ],
     );
   }
