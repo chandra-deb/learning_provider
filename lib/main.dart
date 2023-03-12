@@ -43,7 +43,12 @@ class HomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(context.select<Dog, String>((dog) => dog.name)),
+            Selector<Dog, String>(
+              selector: (_, dog) => dog.name,
+              builder: (context, name, child) {
+                return Text(name);
+              },
+            ),
             const SizedBox(),
             const BreedAndAge(),
           ],
@@ -63,7 +68,10 @@ class BreedAndAge extends StatelessWidget {
     log('Rebuilt BreedAndAge');
     return Column(
       children: [
-        Text(context.select<Dog, String>((dog) => dog.breed)),
+        Selector<Dog, String>(
+          selector: (_, dog) => dog.breed,
+          builder: (context, breed, child) => Text(breed),
+        ),
         const SizedBox(height: 10),
         const Age(),
       ],
@@ -80,7 +88,10 @@ class Age extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(context.select<Dog, int>((dog) => dog.age).toString()),
+        Selector<Dog, int>(
+          selector: (_, dog) => dog.age,
+          builder: (context, age, child) => Text(age.toString()),
+        ),
         ElevatedButton(
           onPressed: context.read<Dog>().grow,
           child: const Text('Increase'),
