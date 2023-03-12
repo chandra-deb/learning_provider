@@ -1,11 +1,8 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'dog.dart';
+import 'counter.dart';
+import 'counter_page.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -23,8 +20,8 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<Dog>(
-      create: (context) => Dog(name: 'Dogy', breed: 'FulDog', age: 2),
+    return ChangeNotifierProvider<Counter>(
+      create: (context) => Counter(),
       child: const HomePage(),
     );
   }
@@ -37,66 +34,34 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Provider 4'),
+        title: const Text('Hello World'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Selector<Dog, String>(
-              selector: (_, dog) => dog.name,
-              builder: (context, name, child) {
-                return Text(name);
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ChangeNotifierProvider.value(
+                      value: context.read<Counter>(),
+                      child: const CounterPage(),
+                    ),
+                  ),
+                );
               },
+              child: const Text('Show Me Counter'),
             ),
-            const SizedBox(),
-            const BreedAndAge(),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: context.read<Counter>().increaseCounter,
+              child: const Text('Increment Counter'),
+            ),
           ],
         ),
       ),
-    );
-  }
-}
-
-class BreedAndAge extends StatelessWidget {
-  const BreedAndAge({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    log('Rebuilt BreedAndAge');
-    return Column(
-      children: [
-        Selector<Dog, String>(
-          selector: (_, dog) => dog.breed,
-          builder: (context, breed, child) => Text(breed),
-        ),
-        const SizedBox(height: 10),
-        const Age(),
-      ],
-    );
-  }
-}
-
-class Age extends StatelessWidget {
-  const Age({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Selector<Dog, int>(
-          selector: (_, dog) => dog.age,
-          builder: (context, age, child) => Text(age.toString()),
-        ),
-        ElevatedButton(
-          onPressed: context.read<Dog>().grow,
-          child: const Text('Increase'),
-        )
-      ],
     );
   }
 }
